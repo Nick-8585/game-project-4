@@ -1,13 +1,8 @@
 /*
 
-The Game Project
-
-Week 3
-
-Game interaction
+The Game Project 4 – Side scrolling
 
 */
-
 
 var gameChar_x;
 var gameChar_y;
@@ -18,11 +13,14 @@ var isRight;
 var isFalling;
 var isPlummeting;
 
-var collectables; // Array of collectable objects
-var canyons; // Array of canyon objects
-var mountains; // Array of mountain objects
-var clouds;    // Array of cloud objects
-var trees;     // Array of tree objects
+var collectables; 
+var canyons; 
+var mountains; 
+var clouds; 
+var trees_x; 
+var birds; 
+
+var livesCount;
 
 function setup()
 {
@@ -35,6 +33,8 @@ function setup()
 	isRight = false;
 	isFalling = false;
 	isPlummeting = false;
+
+	livesCount = 3; // Start with 3 lives
 
 	// list of collectables 
 	collectables = [
@@ -49,13 +49,13 @@ function setup()
 		{ x_pos: 350, width: 90 }
 	];
 
-	// list of mountains (2)
+	// list of mountains 
 	mountains = [
 		{ x: 750, baseY: floorPos_y, width: 270, height: 140 },
-		{ x: 850, baseY: floorPos_y, width: 310, height: 220 } // smaller and more to the right
+		{ x: 850, baseY: floorPos_y, width: 310, height: 220 } 
 	];
 
-	// list of clouds (5)
+	// list of clouds
 	clouds = [
 		{ x: 200, y: 100, size: 30 },
 		{ x: 350, y: 80, size: 40 },
@@ -64,11 +64,17 @@ function setup()
 		{ x: 950, y: 60, size: 25 }
 	];
 
-	// list of trees (3)
-	trees = [
-		{ x: 790, y: floorPos_y - 70 },
-		{ x: 200, y: floorPos_y - 90 },
-		{ x: 600, y: floorPos_y - 60 }
+	// list of trees 
+	trees_x = [790, 200, 600];
+
+	// list of birds
+	birds = [
+		{ x: 1024, y: 120, scale: 0.6, speed: 2.0 },
+		{ x: 900, y: 160, scale: 0.5, speed: 1.6 },
+		{ x: 1100, y: 200, scale: 0.4, speed: 1.2 },
+		{ x: 1034, y: 130, scale: 0.3, speed: 0.8 },
+		{ x: 1044, y: 170, scale: 0.2, speed: 0.5 },
+		{ x: 1048, y: 210, scale: 0.1, speed: 0.3 }
 	];
 }
 
@@ -83,42 +89,68 @@ function draw()
 	fill(0,155,0);
 	rect(0, floorPos_y, width, height - floorPos_y); //draw some green ground
 
-	// Draw all clouds
+	// Game Over screen
+	if(livesCount === 0) {
+		fill(0, 0, 0, 180);
+		rect(0, 0, width, height);
+		textAlign(CENTER, CENTER);
+		fill(255, 0, 0);
+		textSize(48);
+		text("GAME OVER", width / 2, height / 2 - 40);
+		fill(255);
+		textSize(24);
+		text("Press ENTER to restart", width / 2, height / 2 + 10);
+		return;
+	}
+
+	// draw clouds
 	for(let i = 0; i < clouds.length; i++) {
-		let c = clouds[i];
-		drawCloud(c);
+		clouds[i].x -= 0.2 / 5; // clods movement speed
+		// Reset cloud to right if it goes off screen
+		if(clouds[i].x < -clouds[i].size) {
+			clouds[i].x = width + clouds[i].size;
+		}
+		drawCloud(clouds[i]);
 	}
 
-	// Draw all mountains
+	// draw birds
+	for(let i = 0; i < birds.length; i++) {
+		birds[i].x += birds[i].speed / 20; // move left to right
+		drawBird(birds[i].x, birds[i].y, birds[i].scale); 
+		// Reset bird to left if it goes off screen
+		if(birds[i].x > width + 40) {
+			birds[i].x = -40;
+		}
+	}
+
+	// draw mountains
 	for(let i = 0; i < mountains.length; i++) {
-		let m = mountains[i];
-		drawMountain(m);
+		drawMountain(mountains[i]);
 	}
 
-	// Draw all trees
-	for(let i = 0; i < trees.length; i++) {
-		let t = trees[i];
-		drawTree(t);
+	// draw trees 
+	for(let i = 0; i < trees_x.length; i++) {
+		drawTree({ x: trees_x[i], y: floorPos_y - 70 });
 	}
 
-	// Draw all canyons
+	// draw canyons
 	for(let i = 0; i < canyons.length; i++) {
 		drawCanyon(canyons[i]);
 	}
 
-	// Draw and check all collectables
+	// draw and check all collectables
 	for(let i = 0; i < collectables.length; i++) {
-		let c = collectables[i];
-		if (!c.isFound && dist(gameChar_x, gameChar_y, c.x_pos, c.y_pos) < c.size) {
-			c.isFound = true;
+		let collectable = collectables[i];
+		if (!collectable.isFound && dist(gameChar_x, gameChar_y, collectable.x_pos, collectable.y_pos) < collectable.size) {
+			collectable.isFound = true;
 		}
-		if (!c.isFound) {
-			drawCollectable(c);
+		if (!collectable.isFound) {
+			drawCollectable(collectable);
 		}
 	}
 
 	// --- CANYON FALL LOGIC ---
-	// Detect if character is over any canyon and on the ground
+	// detect if character is over any canyon and on the ground
 	isPlummeting = false;
 	for(let i = 0; i < canyons.length; i++) {
 		if(isCharacterOverCanyon(gameChar_x, floorPos_y, canyons[i])) {
@@ -127,12 +159,27 @@ function draw()
 		}
 	}
 
-	// If plummeting, fall faster
+	// if plummeting, fall faster
 	if(isPlummeting) {
 		gameChar_y += 8;
+		// if fallen below the canvas, lose a life and reset position
+		if(gameChar_y > height) {
+			livesCount--;
+			if(livesCount > 0) {
+				// reset character to starting position
+				gameChar_x = width/2;
+				gameChar_y = floorPos_y;
+				isPlummeting = false;
+				isFalling = false;
+				isLeft = false;
+				isRight = false;
+			} else {
+				livesCount = 0;
+			}
+		}
 	}
 
-	//the game character
+	//draw game character
 	if(isLeft && isFalling && !isPlummeting)
 	{
 		drawJumpingLeftStickman(gameChar_x, gameChar_y);
@@ -187,11 +234,30 @@ function draw()
 	{
 		isFalling = false;
 	}
+
+	// HUD: Collectables (coin) and Lives (heart)
+	drawHUD();
 }
 
 
 function keyPressed()
 {
+	// Restart game if game over and ENTER is pressed
+	if(livesCount === 0 && (keyCode === 13 || key === 'Enter')) {
+		livesCount = 3;
+		gameChar_x = width/2;
+		gameChar_y = floorPos_y;
+		isLeft = false;
+		isRight = false;
+		isFalling = false;
+		isPlummeting = false;
+		// Reset collectables
+		for(let i = 0; i < collectables.length; i++) {
+			collectables[i].isFound = false;
+		}
+		return;
+	}
+
 	// if statements to control the animation of the character when
 	// keys are pressed.
 
@@ -403,12 +469,12 @@ function drawCollectable(collectable) {
 		y,
 		collectable.size,
 		collectable.size);
-	// shine 
+	// shine in the center
 	noStroke();
 	fill(255, 255, 255, 180);
-	ellipse(collectable.x_pos + collectable.size * 0.1,
-		y - collectable.size * 0.1,
-		collectable.size * 0.1,
+	ellipse(collectable.x_pos,
+		y,
+		collectable.size * 0.25,
 		collectable.size * 0.25);
 }
 
@@ -419,19 +485,21 @@ function drawCanyon(canyon) {
 	let canyonW = canyon.width;
 	let canyonX = canyon.x_pos;
 
-	// Top sky blue
+	// Top 4/5: sky blue
 	fill(100,155,255);
-	rect(canyonX, canyonY, canyonW, canyonH/3);
-	// Bottom darker blue
+	rect(canyonX, canyonY, canyonW, canyonH * 4/5);
+
+	// Bottom 1/5: dark blue
 	fill(60,110,180);
-	rect(canyonX, canyonY + canyonH/3, canyonW, canyonH * 2/3);
-	
+	rect(canyonX, canyonY + canyonH * 4/5, canyonW, canyonH * 1/5);
+
 	// Left margin edge
 	fill(80, 80, 80);
 	let leftX = canyon.x_pos;
 	triangle(leftX, 432, leftX, 462, leftX + 5, 440);
 	triangle(leftX, 440, leftX, 510, leftX + 8, 495);
 	triangle(leftX, 510, leftX, 576, leftX + 22, 555);
+
 	// Right margin edge
 	let rightX = canyon.x_pos + canyon.width;
 	triangle(rightX, 432, rightX, 482, rightX - 5, 445);
@@ -460,31 +528,83 @@ function drawCloud(cloud) {
 function drawMountain(mountain) {
 	noStroke();
 	fill(150);
+	// mountain
 	triangle(
 		mountain.x, mountain.baseY,
 		mountain.x + mountain.width / 2, mountain.baseY - mountain.height,
 		mountain.x + mountain.width, mountain.baseY
 	);
-	fill(150);
 
-	// White peak for main mountain
+	// White peak 
 	fill(255);
 	triangle(
-		mountain.x + mountain.width / 2, mountain.baseY - mountain.height, // peak
-		mountain.x + mountain.width / 2 - 15, mountain.baseY - mountain.height + 30,
-		mountain.x + mountain.width / 2 + 15, mountain.baseY - mountain.height + 30
+		mountain.x + mountain.width / 2, mountain.baseY - mountain.height, 
+		mountain.x + mountain.width / 2 - 22, mountain.baseY - mountain.height + 35,
+		mountain.x + mountain.width / 2 + 22, mountain.baseY - mountain.height + 30
 	);
 
 }
 
 function drawTree(tree) {
 	noStroke();
+	//trunk
 	fill(139, 69, 19);
-	rect(tree.x, tree.y, 20, 70); //trunk
+	rect(tree.x, tree.y, 20, 70);
+	//folliage 
 	fill(34, 139, 34);
-	triangle(tree.x - 20, tree.y + 8, tree.x + 10, tree.y - 50, tree.x + 40, tree.y + 8); //lower foliage
-	triangle(tree.x - 10, tree.y - 22, tree.x + 10, tree.y - 70, tree.x + 30, tree.y - 22); //upper foliage
+	triangle(tree.x - 28, tree.y + 18, tree.x + 10, tree.y - 40, tree.x + 48, tree.y + 18); //lower foliage
+	triangle(tree.x - 18, tree.y - 12, tree.x + 10, tree.y - 80, tree.x + 38, tree.y - 12); //upper foliage
 }
+
+
+function drawBird(x, y, scale) {
+	stroke(60);
+	strokeWeight(2 * scale);
+	noFill();
+	arc(x, y, 24 * scale, 12 * scale, PI, 0); // left wing
+	arc(x + 18 * scale, y, 24 * scale, 12 * scale, PI, 0); // right wing
+}
+
+function drawHUD() {
+	// count collected coins
+	let collected = 0;
+	for(let i = 0; i < collectables.length; i++) {
+		if(collectables[i].isFound) collected++;
+	}
+	// coin symbol
+	let coin_x = 20, coin_y = 30;
+	stroke(180, 140, 30);
+	strokeWeight(2);
+	fill(255, 215, 0);
+	ellipse(coin_x, coin_y, 14, 14); 
+	noStroke();
+	fill(255, 255, 255, 180);
+	ellipse(coin_x, coin_y, 4, 4); 
+	//coin count
+	fill(0);
+	noStroke();
+	textSize(18);
+	textAlign(LEFT, CENTER);
+	text("x " + collected, coin_x + 14, coin_y);
+
+	//hearts for lives
+	let heart_x = 20;
+	let heart_y = 54;
+	for(let i = 0; i < livesCount; i++) {
+		drawHeart(heart_x + i * 28, heart_y, 14);
+	}
+
+}
+
+function drawHeart(x, y, size) {
+	fill(220, 40, 60);
+	noStroke();
+	let d = size / 2;
+	ellipse(x - d / 2, y, d, d);
+	ellipse(x + d / 2, y, d, d);
+	triangle(x - d, y, x + d, y, x, y + d * 1.5);
+}
+
 
 
 
