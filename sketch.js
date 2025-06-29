@@ -3,27 +3,21 @@
 The Game Project 4 – Side scrolling
 
 */
-
 var gameChar_x;
 var gameChar_y;
 var floorPos_y;
-
 var isLeft;
 var isRight;
 var isFalling;
 var isPlummeting;
-
 var collectables; 
 var canyons; 
 var mountains; 
 var clouds; 
 var trees_x; 
 var birds; 
-
 var livesCount;
-
 var heartCollectables; 
-
 var cameraPosX;
 
 function setup()
@@ -38,7 +32,6 @@ function setup()
 	isRight = false;
 	isFalling = false;
 	isPlummeting = false;
-
 	livesCount = 3; // start with 3 lives
 
 	// list of colectables 
@@ -47,7 +40,6 @@ function setup()
 		{ pos_x: 300, pos_y: floorPos_y - 100, size: 20, isFound: false },
 		{ pos_x: 1300, pos_y: floorPos_y - 100, size: 20, isFound: false }
 	];
-
 	// list of canions
 	canyons = [
 		{ pos_x: -1000, width: 1070 },
@@ -55,14 +47,12 @@ function setup()
 		{ pos_x: 350, width: 90 },
 		{ pos_x: 1350, width: 1000 }
 	];
-
 	// list of mountains 
 	mountains = [
 		{ pos_x: 750, pos_y: floorPos_y, width: 270, height: 140 },
 		{ pos_x: 850, pos_y: floorPos_y, width: 310, height: 220 },
 		{ pos_x: 1000, pos_y: floorPos_y, width: 250, height: 110 }  
 	];
-
 	// list of clouds with diferent sizes
 	clouds = [
 		{ pos_x: 200, pos_y: 100, size: 30 },
@@ -71,10 +61,8 @@ function setup()
 		{ pos_x: 800, pos_y: 90, size: 40 },
 		{ pos_x: 950, pos_y: 60, size: 25 }
 	];
-
 	// list of trees 
 	trees_x = [790, 200, 600];
-
 	// list of birds with different speeds and sizes
 	birds = [
 		{ pos_x: 1024, pos_y: 120, scale: 0.6, speed: 2.0 },
@@ -84,7 +72,6 @@ function setup()
 		{ pos_x: 1044, pos_y: 170, scale: 0.2, speed: 0.5 },
 		{ pos_x: 1048, pos_y: 210, scale: 0.1, speed: 0.3 }
 	];
-
 	// list of collectible hearts
 	heartCollectables = [
 		{ pos_x: 70, pos_y: floorPos_y, size: 20, isFound: false }
@@ -93,21 +80,17 @@ function setup()
 
 function draw()
 {
-
 	///////////DRAWING CODE//////////
-
 	//update camera position
 	cameraPosX = gameChar_x - width / 2;
 
 	background(100,155,255); //fill the sky blue
-
 	noStroke();
 	fill(0,155,0);
 	rect(0, floorPos_y, width, height - floorPos_y); //draw some green ground
 
 	push();
 	translate(-cameraPosX, 0);
-
 
 	// game over screen
 	if (livesCount == 0) {
@@ -123,7 +106,6 @@ function draw()
 		pop();
 		return;
 	}
-
 	// draw clouds
 	for (let i = 0; i < clouds.length; i++) {
 		// clouds movement speed
@@ -134,7 +116,6 @@ function draw()
 		}
 		drawCloud(clouds[i]);
 	}
-
 	// draw birds
 	for (let i = 0; i < birds.length; i++) {
 		// move left to right
@@ -145,22 +126,18 @@ function draw()
 			birds[i].pos_x = -40;
 		}
 	}
-
 	// draw mountains
 	for (let i = 0; i < mountains.length; i++) {
 		drawMountain(mountains[i]);
 	}
-
 	// draw trees 
 	for (let i = 0; i < trees_x.length; i++) {
 		drawTree({ pos_x: trees_x[i], pos_y: floorPos_y - 70 });
 	}
-
 	// draw canyons
 	for (let i = 0; i < canyons.length; i++) {
 		drawCanyon(canyons[i]);
 	}
-
 	// draw and check all collectables
 	for (let i = 0; i < collectables.length; i++) {
 		let collectable = collectables[i];
@@ -171,7 +148,6 @@ function draw()
 			drawCollectable(collectable);
 		}
 	}
-
 	// draw and check all collectible hearts
 	for (let i = 0; i < heartCollectables.length; i++) {
 		let heart = heartCollectables[i];
@@ -183,7 +159,6 @@ function draw()
 			drawHeart(heart);
 		}
 	}
-
 	// --- CANYON FALL LOGIC ---
 	// detect if character is over any canyon 
 	isPlummeting = false;
@@ -193,7 +168,6 @@ function draw()
 			break;
 		}
 	}
-
 	// if plummeting, fall faster
 	if (isPlummeting) {
 		gameChar_y += 8;
@@ -210,10 +184,8 @@ function draw()
 			} 
 		}
 	}
-
 	// HUD: number of collected coins and number of remaining lives
 	drawHUD();
-
 	//draw game character
 	if (isLeft && isFalling && !isPlummeting)
 	{
@@ -248,14 +220,12 @@ function draw()
 
 	///////////INTERACTION CODE//////////
 	//Put conditional statements to move the game character below here
-
 	if (isLeft == true && !isPlummeting) {
 		gameChar_x -= 5; // move left
 	}
 	if (isRight == true && !isPlummeting) {
 		gameChar_x += 5; // move right
 	}
- 
 	// gravity logic
 	if (gameChar_y < floorPos_y && !isPlummeting)
 	{
@@ -271,8 +241,6 @@ function draw()
 	{
 		isFalling = false;
 	}
-
-
 }
 
 
@@ -321,7 +289,6 @@ function keyPressed()
 		gameChar_y -= 100;
 		console.log("Space bar pressed, jumping");
 	}
-	
 }
 
 function keyReleased()
@@ -331,7 +298,6 @@ function keyReleased()
 
 	console.log("keyReleased: " + key);
 	console.log("keyReleased: " + keyCode);
-
 	if (keyCode == 37) //left arrow
 	{
 		isLeft = false;
@@ -527,22 +493,18 @@ function drawCanyon(canyon) {
 	//  canyon
 	canyon.pos_y = 432;
 	canyon.h = 144;
-
 	// top sky blue
 	fill(100,155,255);
 	rect(canyon.pos_x, canyon.pos_y, canyon.width, canyon.h * 4/5);
-
 	// bottom  dark blue
 	fill(60,110,180);
 	rect(canyon.pos_x, canyon.pos_y + canyon.h * 4/5, canyon.width, canyon.h * 1/5);
-
 	// left margin edge
 	fill(80, 80, 80);
 	let leftMargin_x = canyon.pos_x;
 	triangle(leftMargin_x, 432, leftMargin_x, 462, leftMargin_x + 5, 440);
 	triangle(leftMargin_x, 440, leftMargin_x, 510, leftMargin_x + 8, 495);
 	triangle(leftMargin_x, 510, leftMargin_x, 576, leftMargin_x + 22, 555);
-
 	// right margin edge
 	let rightMargin_x = canyon.pos_x + canyon.width;
 	triangle(rightMargin_x, 432, rightMargin_x, 482, rightMargin_x - 5, 445);
@@ -577,7 +539,6 @@ function drawMountain(mountain) {
 		mountain.pos_x + mountain.width / 2, mountain.pos_y - mountain.height,
 		mountain.pos_x + mountain.width, mountain.pos_y
 	);
-
 	// white peak 
 	fill(255);
 	triangle(
@@ -585,7 +546,6 @@ function drawMountain(mountain) {
 		mountain.pos_x + mountain.width / 2 - 22, mountain.pos_y - mountain.height + 35,
 		mountain.pos_x + mountain.width / 2 + 22, mountain.pos_y - mountain.height + 30
 	);
-
 }
 
 function drawTree(tree) {
@@ -613,6 +573,10 @@ function drawBird(x, y, scale) {
 }
 
 function drawHUD() {
+	// fix HUD to screen position
+	push();
+	translate(cameraPosX, 0);
+
 	// count collected coins
 	let collected = 0;
 	for (let i = 0; i < collectables.length; i++) {
@@ -636,12 +600,12 @@ function drawHUD() {
 		drawHeart({ pos_x: heartPos_x + i * 28, pos_y: heartPos_y, size: 14 });
 	}
 
+	pop();
 }
 
 function drawHeart(heart) {
 	fill(220, 40, 60);
 	noStroke();
-	
 	let y = heart.pos_y - heart.size * 0.65;
 	ellipse(heart.pos_x - heart.size / 4, y, heart.size / 2, heart.size / 2);
 	ellipse(heart.pos_x + heart.size / 4, y, heart.size / 2, heart.size / 2);
