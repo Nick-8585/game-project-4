@@ -20,8 +20,7 @@ var livesCount;
 var heartCollectables; 
 var cameraPosX;
 
-function setup()
-{
+function setup() {
 	createCanvas(1024, 576);
 	floorPos_y = height * 3/4;
 	gameChar_x = width/2;
@@ -78,8 +77,7 @@ function setup()
 	];
 }
 
-function draw()
-{
+function draw() {
 	///////////DRAWING CODE//////////
 	//update camera position
 	cameraPosX = gameChar_x - width / 2;
@@ -187,32 +185,25 @@ function draw()
 	// HUD: number of collected coins and number of remaining lives
 	drawHUD();
 	//draw game character
-	if (isLeft && isFalling && !isPlummeting)
-	{
+	if (isLeft && isFalling && !isPlummeting) {
 		drawJumpingLeftStickman(gameChar_x, gameChar_y);
 	}
-	else if (isRight && isFalling && !isPlummeting)
-	{
+	else if (isRight && isFalling && !isPlummeting) {
 		drawJumpingRightStickman(gameChar_x, gameChar_y);
 	}
-	else if (isLeft && !isPlummeting)
-	{
+	else if (isLeft && !isPlummeting) {
 		drawFacingLeftStickman(gameChar_x, gameChar_y);
 	}
-	else if (isRight && !isPlummeting)
-	{
+	else if (isRight && !isPlummeting) {
 		drawFacingRightStickman(gameChar_x, gameChar_y);
 	}
-	else if ((isFalling || isPlummeting) && !isPlummeting)
-	{
+	else if ((isFalling || isPlummeting) && !isPlummeting) {
 		drawJumpingStickman(gameChar_x, gameChar_y);
 	}
-	else if (isPlummeting)
-	{
+	else if (isPlummeting) {
 		drawJumpingStickman(gameChar_x, gameChar_y);
 	}
-	else
-	{
+	else {
 		drawStandingStickman(gameChar_x, gameChar_y);
 	}
 
@@ -227,25 +218,21 @@ function draw()
 		gameChar_x += 5; // move right
 	}
 	// gravity logic
-	if (gameChar_y < floorPos_y && !isPlummeting)
-	{
+	if (gameChar_y < floorPos_y && !isPlummeting) {
 		gameChar_y += 5; // fall speed
 		isFalling = true;
 	}
-	else if (gameChar_y > floorPos_y && !isPlummeting)
-	{
+	else if (gameChar_y > floorPos_y && !isPlummeting) {
 		gameChar_y = floorPos_y; 
 		isFalling = false;
 	}
-	else if (!isPlummeting)
-	{
+	else if (!isPlummeting) {
 		isFalling = false;
 	}
 }
 
 
-function keyPressed()
-{
+function keyPressed() {
 	// restart game if game over and ENTER is pressed
 	if (livesCount === 0 && (keyCode === 13 || key === 'Enter')) {
 		livesCount = 3;
@@ -274,44 +261,43 @@ function keyPressed()
 	console.log("keyPressed: " + keyCode);
 
 	if (isPlummeting) return; // freeze controls if plummeting
-	if (keyCode == 37) //left arrow
-	{
+	//left arrow
+	if (keyCode == 37) {
 		isLeft = true;
 		console.log("Left arrow pressed");
 	}
-	else if (keyCode == 39) //right arrow
-	{
+	//right arrow
+	else if (keyCode == 39) {
 		isRight = true;
 		console.log("Right arrow pressed");
 	}
-	else if (keyCode == 32 && !isFalling) // space bar for jump, only if on ground
-	{
+	// space bar for jump, only if on ground
+	else if (keyCode == 32 && !isFalling) {
 		gameChar_y -= 100;
 		console.log("Space bar pressed, jumping");
 	}
 }
 
-function keyReleased()
-{
+function keyReleased(){
 	// if statements to control the animation of the character when
 	// keys are released.
 
 	console.log("keyReleased: " + key);
 	console.log("keyReleased: " + keyCode);
-	if (keyCode == 37) //left arrow
-	{
+	//left arrow
+	if (keyCode == 37) {
 		isLeft = false;
 		console.log("Left arrow released");
 	}
-	else if (keyCode == 39) //right arrow
-	{
+	//right arrow
+	else if (keyCode == 39) {
 		isRight = false;
 		console.log("Right arrow released");
 	}
 }
 
 
-function drawStandingStickman(x, y){
+function drawStandingStickman(x, y) {
 	stroke(0);
 	strokeWeight(2);
 	//legs
@@ -340,7 +326,7 @@ function drawStandingStickman(x, y){
 	strokeWeight(1);
 }
 
-function drawJumpingStickman(x, y){
+function drawJumpingStickman(x, y) {
 	stroke(0);
 	strokeWeight(2);
 	// legs
@@ -369,7 +355,7 @@ function drawJumpingStickman(x, y){
 	strokeWeight(1);
 }
 
-function drawFacingLeftStickman(x, y){
+function drawFacingLeftStickman(x, y) {
 	stroke(0);
 	strokeWeight(2);
 	// legs
@@ -398,7 +384,7 @@ function drawFacingLeftStickman(x, y){
 	strokeWeight(1);
 }
 
-function drawFacingRightStickman(x, y){
+function drawFacingRightStickman(x, y) {
 	stroke(0);
 	strokeWeight(2);
 	// legs
@@ -427,7 +413,7 @@ function drawFacingRightStickman(x, y){
 	strokeWeight(1);
 }
 
-function drawJumpingRightStickman(x, y){
+function drawJumpingRightStickman(x, y) {
 	stroke(0);
 	strokeWeight(2);
 	// legs
@@ -456,7 +442,7 @@ function drawJumpingRightStickman(x, y){
 	strokeWeight(1);
 }
 
-function drawJumpingLeftStickman(x, y){
+function drawJumpingLeftStickman(x, y) {
 	stroke(0);
 	strokeWeight(2);
 	// legs
