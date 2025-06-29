@@ -314,50 +314,58 @@ function keyReleased()
 function drawStandingStickman(x, y){
 	stroke(0);
 	strokeWeight(2);
-	line(x, y - 20, x - 8, y + 1); //left leg
-	line(x, y - 20, x + 8, y + 1); //right leg
-	// Feet
+	//legs
+	line(x, y - 20, x - 8, y + 1); 
+	line(x, y - 20, x + 8, y + 1); 
+	//feet
 	fill(0);
 	ellipse(x - 8, y + 1, 5, 3); 
-	ellipse(x + 8, y + 1, 5, 3); // right foot
+	ellipse(x + 8, y + 1, 5, 3); 
 	fill(0);
 	noStroke();
-	rect(x - 3, y - 50, 6, 30); //body
+	//body
+	rect(x - 3, y - 50, 6, 30); 
 	stroke(0);
 	strokeWeight(2);
-	line(x - 3, y - 45, x - 10, y - 30); //left arm
-	line(x + 3, y - 45, x + 10, y - 30); //right arm
-	// Hands
+	// arms
+	line(x - 3, y - 45, x - 10, y - 30); 
+	line(x + 3, y - 45, x + 10, y - 30); 
+	// hands
 	fill(0);
-	ellipse(x - 10, y - 30, 4, 4); // left hand
-	ellipse(x + 10, y - 30, 4, 4); // right hand
+	ellipse(x - 10, y - 30, 4, 4); 
+	ellipse(x + 10, y - 30, 4, 4); 
 	fill(0);
-	ellipse(x, y - 57, 10, 10); //head
+	//head
+	ellipse(x, y - 57, 10, 10); 
 	strokeWeight(1);
 }
 
 function drawJumpingStickman(x, y){
 	stroke(0);
 	strokeWeight(2);
-	line(x, y - 20, x - 8, y + 1); //left leg
-	line(x, y - 20, x + 8, y + 1); //right leg
-	// Feet
+	// legs
+	line(x, y - 20, x - 8, y + 1);
+	line(x, y - 20, x + 8, y + 1); 
+	// feet
 	fill(0);
 	ellipse(x - 8, y + 1, 5, 3); 
-	ellipse(x + 8, y + 1, 5, 3); // right foot
+	ellipse(x + 8, y + 1, 5, 3); 
 	fill(0);
 	noStroke();
-	rect(x - 3, y - 50, 6, 30); //body
+	//body
+	rect(x - 3, y - 50, 6, 30);
 	stroke(0);
 	strokeWeight(2);
-	line(x - 3, y - 45, x - 15, y - 60); //left arm
-	line(x + 3, y - 45, x + 15, y - 60); //right arm
-	// Hands
+	// arms
+	line(x - 3, y - 45, x - 15, y - 60); 
+	line(x + 3, y - 45, x + 15, y - 60);
+	// hands
 	fill(0);
-	ellipse(x - 15, y - 60, 4, 4); // left hand
-	ellipse(x + 15, y - 60, 4, 4); // right hand
+	ellipse(x - 15, y - 60, 4, 4); 
+	ellipse(x + 15, y - 60, 4, 4); 
 	fill(0);
-	ellipse(x, y - 57, 10, 10); //head
+	//head
+	ellipse(x, y - 57, 10, 10); 
 	strokeWeight(1);
 }
 
