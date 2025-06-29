@@ -547,7 +547,6 @@ function drawTree(tree) {
 	//trunk
 	fill(139, 69, 19);
 	rect(tree.pos_x, tree.pos_y, 20, 70);
-
 	fill(34, 139, 34);
 	 //lower foliage
 	triangle(tree.pos_x - 28, tree.pos_y + 18, tree.pos_x + 10, tree.pos_y - 40, tree.pos_x + 48, tree.pos_y + 18);
@@ -570,7 +569,6 @@ function drawHUD() {
 	// fix HUD to screen position
 	push();
 	translate(cameraPosX, 0);
-
 	// count collected coins
 	let collected = 0;
 	for (let i = 0; i < collectables.length; i++) {
@@ -586,7 +584,6 @@ function drawHUD() {
 	textSize(18);
 	textAlign(LEFT, CENTER);
 	text("x " + collected, coinPos_x + 14, coinPos_y);
-
 	//show numbre of lives/ hearts
 	let heartPos_x = 20;
 	let heartPos_y = 54;
