@@ -24,12 +24,15 @@ var livesCount;
 
 var heartCollectables; 
 
+var cameraPosX;
+
 function setup()
 {
 	createCanvas(1024, 576);
 	floorPos_y = height * 3/4;
 	gameChar_x = width/2;
 	gameChar_y = floorPos_y;
+	cameraPosX = 0;
 
 	isLeft = false;
 	isRight = false;
@@ -41,20 +44,23 @@ function setup()
 	// list of colectables 
 	collectables = [
 		{ pos_x: 100, pos_y: floorPos_y, size: 20, isFound: false },
-		{ pos_x: 300, pos_y: floorPos_y - 100, size: 20, isFound: false }
+		{ pos_x: 300, pos_y: floorPos_y - 100, size: 20, isFound: false },
+		{ pos_x: 1300, pos_y: floorPos_y - 100, size: 20, isFound: false }
 	];
 
 	// list of canions
 	canyons = [
-		{ pos_x: 0, width: 50 },
+		{ pos_x: -1000, width: 1070 },
 		{ pos_x: 120, width: 70 },
-		{ pos_x: 350, width: 90 }
+		{ pos_x: 350, width: 90 },
+		{ pos_x: 1350, width: 1000 }
 	];
 
 	// list of mountains 
 	mountains = [
 		{ pos_x: 750, pos_y: floorPos_y, width: 270, height: 140 },
-		{ pos_x: 850, pos_y: floorPos_y, width: 310, height: 220 } 
+		{ pos_x: 850, pos_y: floorPos_y, width: 310, height: 220 },
+		{ pos_x: 1000, pos_y: floorPos_y, width: 250, height: 110 }  
 	];
 
 	// list of clouds with diferent sizes
@@ -90,16 +96,23 @@ function draw()
 
 	///////////DRAWING CODE//////////
 
+	//update camera position
+	cameraPosX = gameChar_x - width / 2;
+
 	background(100,155,255); //fill the sky blue
 
 	noStroke();
 	fill(0,155,0);
 	rect(0, floorPos_y, width, height - floorPos_y); //draw some green ground
 
+	push();
+	translate(-cameraPosX, 0);
+
+
 	// game over screen
 	if (livesCount == 0) {
-		fill(0, 0, 0, 180);
-		rect(0, 0, width, height);
+		push();
+		translate(cameraPosX, 0); 
 		textAlign(CENTER, CENTER);
 		fill(255, 0, 0);
 		textSize(48);
@@ -107,6 +120,7 @@ function draw()
 		fill(255);
 		textSize(24);
 		text("Press ENTER to restart", width / 2, height / 2 + 40);
+		pop();
 		return;
 	}
 
@@ -197,6 +211,9 @@ function draw()
 		}
 	}
 
+	// HUD: number of collected coins and number of remaining lives
+	drawHUD();
+
 	//draw game character
 	if (isLeft && isFalling && !isPlummeting)
 	{
@@ -227,6 +244,8 @@ function draw()
 		drawStandingStickman(gameChar_x, gameChar_y);
 	}
 
+	pop();
+
 	///////////INTERACTION CODE//////////
 	//Put conditional statements to move the game character below here
 
@@ -253,8 +272,7 @@ function draw()
 		isFalling = false;
 	}
 
-	// HUD: number of collected coins and number of remaining lives
-	drawHUD();
+
 }
 
 
