@@ -81,8 +81,7 @@ function setup()
 
 	// list of collectible hearts
 	heartCollectables = [
-		{ pos_x: 600, pos_y: floorPos_y, size: 20, isFound: false },
-		{ pos_x: 900, pos_y: floorPos_y - 100, size: 20, isFound: false }
+		{ pos_x: 70, pos_y: floorPos_y, size: 20, isFound: false }
 	];
 }
 
@@ -426,7 +425,7 @@ function drawFacingRightStickman(x, y){
 	//arms
 	line(x - 3, y - 45, x - 10, y - 30); 
 	line(x + 3, y - 45, x + 10, y - 30); 
-	// Hands
+	// hands
 	fill(0);
 	ellipse(x - 10, y - 30, 4, 4);
 	ellipse(x + 10, y - 30, 4, 4); 
