@@ -19,7 +19,7 @@ var birds;
 var livesCount;
 var heartCollectables; 
 var cameraPosX;
-
+//test
 function setup() {
 	createCanvas(1024, 576);
 	floorPos_y = height * 3/4;
