@@ -1,6 +1,6 @@
 /*
 
-The Game Project 4 – Side scrolling
+The Game Project 5 – Multiple interactables
 
 */
 var gameChar_x;
@@ -19,7 +19,10 @@ var birds;
 var livesCount;
 var heartCollectables; 
 var cameraPosX;
-//test
+
+// set map width
+var mapWidth = 2048; 
+
 function setup() {
 	createCanvas(1024, 576);
 	floorPos_y = height * 3/4;
@@ -52,13 +55,18 @@ function setup() {
 		{ pos_x: 850, pos_y: floorPos_y, width: 310, height: 220 },
 		{ pos_x: 1000, pos_y: floorPos_y, width: 250, height: 110 }  
 	];
-	// list of clouds with diferent sizes
+	// list of clouds with different sizes
 	clouds = [
 		{ pos_x: 200, pos_y: 100, size: 30 },
 		{ pos_x: 350, pos_y: 80, size: 40 },
 		{ pos_x: 600, pos_y: 120, size: 20 },
 		{ pos_x: 800, pos_y: 90, size: 40 },
-		{ pos_x: 950, pos_y: 60, size: 25 }
+		{ pos_x: 950, pos_y: 60, size: 25 },
+		{ pos_x: 1200, pos_y: 110, size: 35 },
+		{ pos_x: 1450, pos_y: 70, size: 45 },
+		{ pos_x: 1700, pos_y: 130, size: 28 },
+		{ pos_x: 1900, pos_y: 90, size: 38 },
+		{ pos_x: 2100, pos_y: 100, size: 32 } 
 	];
 	// list of trees 
 	trees_x = [790, 200, 600];
@@ -105,15 +113,8 @@ function draw() {
 		return;
 	}
 	// draw clouds
-	for (let i = 0; i < clouds.length; i++) {
-		// clouds movement speed
-		clouds[i].pos_x -= 0.1; 
-		// reset cloud to right if it goes off screen
-		if (clouds[i].pos_x < -clouds[i].size) {
-			clouds[i].pos_x = width + clouds[i].size;
-		}
-		drawCloud(clouds[i]);
-	}
+	drawClouds();
+
 	// draw birds
 	for (let i = 0; i < birds.length; i++) {
 		// move left to right
@@ -516,12 +517,23 @@ function isCharacterOverCanyon(gameChar_x, floorPos_y, canyon) {
 	);
 }
 
-function drawCloud(cloud) {
-	noStroke();
-	fill(255, 255, 255);
-	ellipse(cloud.pos_x, cloud.pos_y, cloud.size, cloud.size);
-	ellipse(cloud.pos_x + cloud.size * 0.5, cloud.pos_y - cloud.size * 0.2, cloud.size * 1.1, cloud.size * 1.1);
-	ellipse(cloud.pos_x + cloud.size, cloud.pos_y, cloud.size, cloud.size);
+function drawClouds() {
+	for (let i = 0; i < clouds.length; i++) {
+		// clouds movement speed
+		clouds[i].pos_x -= 0.1; 
+		// reset cloud to right if it goes off the map
+		if (clouds[i].pos_x < 0 - clouds[i].size) {
+			clouds[i].pos_x = mapWidth + clouds[i].size;
+		}
+
+		let cloud = clouds[i];
+		// draw cloud
+		noStroke();
+		fill(255, 255, 255);
+		ellipse(cloud.pos_x, cloud.pos_y, cloud.size, cloud.size);
+		ellipse(cloud.pos_x + cloud.size * 0.5, cloud.pos_y - cloud.size * 0.2, cloud.size * 1.1, cloud.size * 1.1);
+		ellipse(cloud.pos_x + cloud.size, cloud.pos_y, cloud.size, cloud.size);
+	}
 }
 
 function drawMountain(mountain) {
