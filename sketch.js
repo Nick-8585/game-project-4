@@ -44,10 +44,10 @@ function setup() {
 	];
 	// list of canions
 	canyons = [
-		{ pos_x: -1000, width: 1070 },
-		{ pos_x: 120, width: 70 },
-		{ pos_x: 350, width: 90 },
-		{ pos_x: 1350, width: 1000 }
+		{ pos_x: -1000, pos_y: 432, width: 1070, height: 144 },
+		{ pos_x: 120, pos_y: 432, width: 70, height: 144 },
+		{ pos_x: 350, pos_y: 432, width: 90, height: 144 },
+		{ pos_x: 1350, pos_y: 432, width: 1000, height: 144 }
 	];
 	// list of mountains 
 	mountains = [
@@ -69,15 +69,25 @@ function setup() {
 		{ pos_x: 2100, pos_y: 100, size: 32 } 
 	];
 	// list of trees 
-	trees_x = [790, 200, 600];
+	trees_x = [
+		{ pos_x: 200, size: 0.7 },
+		{ pos_x: 600, size: 0.9 },
+		{ pos_x: 790, size: 1.0 },
+		{ pos_x: 1200, size: 1.2 }
+	];
 	// list of birds with different speeds and sizes
 	birds = [
-		{ pos_x: 1024, pos_y: 120, scale: 0.6, speed: 2.0 },
-		{ pos_x: 900, pos_y: 160, scale: 0.5, speed: 1.6 },
-		{ pos_x: 1100, pos_y: 200, scale: 0.4, speed: 1.2 },
-		{ pos_x: 1034, pos_y: 130, scale: 0.3, speed: 0.8 },
-		{ pos_x: 1044, pos_y: 170, scale: 0.2, speed: 0.5 },
-		{ pos_x: 1048, pos_y: 210, scale: 0.1, speed: 0.3 }
+		{ pos_x: 1024, pos_y: 120, size: 0.6, speed: 2.0 },
+		{ pos_x: 900, pos_y: 160, size: 0.5, speed: 1.6 },
+		{ pos_x: 1100, pos_y: 200, size: 0.4, speed: 1.2 },
+		{ pos_x: 1034, pos_y: 130, size: 0.3, speed: 0.8 },
+		{ pos_x: 1044, pos_y: 170, size: 0.2, speed: 0.5 },
+		{ pos_x: 1048, pos_y: 210, size: 0.1, speed: 0.3 },
+		{ pos_x: 400, pos_y: 100, size: 0.7, speed: 1.8 },
+		{ pos_x: 600, pos_y: 140, size: 0.5, speed: 1.1 },
+		{ pos_x: 1500, pos_y: 180, size: 0.8, speed: 2.2 },
+		{ pos_x: 1800, pos_y: 110, size: 0.6, speed: 1.5 },
+		{ pos_x: 2000, pos_y: 90, size: 0.4, speed: 1.0 }
 	];
 	// list of collectible hearts
 	heartCollectables = [
@@ -116,27 +126,14 @@ function draw() {
 	drawClouds();
 
 	// draw birds
-	for (let i = 0; i < birds.length; i++) {
-		// move left to right
-		birds[i].pos_x += birds[i].speed / 20; 
-		drawBird(birds[i].pos_x, birds[i].pos_y, birds[i].scale); 
-		// reset bird to left if it goes off screen
-		if (birds[i].pos_x > width + 40) { //aprox. bird size 40
-			birds[i].pos_x = -40;
-		}
-	}
+	drawBirds();
 	// draw mountains
-	for (let i = 0; i < mountains.length; i++) {
-		drawMountain(mountains[i]);
-	}
+	drawMountains();
 	// draw trees 
-	for (let i = 0; i < trees_x.length; i++) {
-		drawTree({ pos_x: trees_x[i], pos_y: floorPos_y - 70 });
-	}
+	drawTrees();
 	// draw canyons
-	for (let i = 0; i < canyons.length; i++) {
-		drawCanyon(canyons[i]);
-	}
+	drawCanyons();
+
 	// draw and check all collectables
 	for (let i = 0; i < collectables.length; i++) {
 		let collectable = collectables[i];
@@ -484,29 +481,6 @@ function drawCollectable(collectable) {
 	ellipse(collectable.pos_x, collectable.pos_y - collectable.size / 2, collectable.size * 0.25, collectable.size * 0.25);
 }
 
-function drawCanyon(canyon) {
-	//  canyon
-	canyon.pos_y = 432;
-	canyon.h = 144;
-	// top sky blue
-	fill(100,155,255);
-	rect(canyon.pos_x, canyon.pos_y, canyon.width, canyon.h * 4/5);
-	// bottom  dark blue
-	fill(60,110,180);
-	rect(canyon.pos_x, canyon.pos_y + canyon.h * 4/5, canyon.width, canyon.h * 1/5);
-	// left margin edge
-	fill(80, 80, 80);
-	let leftMargin_x = canyon.pos_x;
-	triangle(leftMargin_x, 432, leftMargin_x, 462, leftMargin_x + 5, 440);
-	triangle(leftMargin_x, 440, leftMargin_x, 510, leftMargin_x + 8, 495);
-	triangle(leftMargin_x, 510, leftMargin_x, 576, leftMargin_x + 22, 555);
-	// right margin edge
-	let rightMargin_x = canyon.pos_x + canyon.width;
-	triangle(rightMargin_x, 432, rightMargin_x, 482, rightMargin_x - 5, 445);
-	triangle(rightMargin_x, 470, rightMargin_x, 560, rightMargin_x - 12, 492);
-	triangle(rightMargin_x, 520, rightMargin_x, 596, rightMargin_x - 20, 560);
-}
-
 function isCharacterOverCanyon(gameChar_x, floorPos_y, canyon) {
 	// returns true if the character is over the canyon
 	let margin = 5; // not to fall to soon
@@ -536,45 +510,95 @@ function drawClouds() {
 	}
 }
 
-function drawMountain(mountain) {
-	noStroke();
-	fill(150);
-	// mountain
-	triangle(
-		mountain.pos_x, mountain.pos_y,
-		mountain.pos_x + mountain.width / 2, mountain.pos_y - mountain.height,
-		mountain.pos_x + mountain.width, mountain.pos_y
-	);
-	// white peak 
-	fill(255);
-	triangle(
-		mountain.pos_x + mountain.width / 2, mountain.pos_y - mountain.height, 
-		mountain.pos_x + mountain.width / 2 - 22, mountain.pos_y - mountain.height + 35,
-		mountain.pos_x + mountain.width / 2 + 22, mountain.pos_y - mountain.height + 30
-	);
+function drawMountains() {
+	for (let i = 0; i < mountains.length; i++) {
+		let mountain = mountains[i];
+		
+		// draw mountain
+		noStroke();
+		fill(150);
+		triangle(
+			mountain.pos_x, mountain.pos_y,
+			mountain.pos_x + mountain.width / 2, mountain.pos_y - mountain.height,
+			mountain.pos_x + mountain.width, mountain.pos_y
+		);
+		// white peak 
+		fill(255);
+		triangle(
+			mountain.pos_x + mountain.width / 2, mountain.pos_y - mountain.height, 
+			mountain.pos_x + mountain.width / 2 - 22, mountain.pos_y - mountain.height + 35,
+			mountain.pos_x + mountain.width / 2 + 22, mountain.pos_y - mountain.height + 30
+		);
+	}
 }
 
-function drawTree(tree) {
-	noStroke();
-	//trunk
-	fill(139, 69, 19);
-	rect(tree.pos_x, tree.pos_y, 20, 70);
-	fill(34, 139, 34);
-	 //lower foliage
-	triangle(tree.pos_x - 28, tree.pos_y + 18, tree.pos_x + 10, tree.pos_y - 40, tree.pos_x + 48, tree.pos_y + 18);
-	//upper foliage
-	triangle(tree.pos_x - 18, tree.pos_y - 12, tree.pos_x + 10, tree.pos_y - 80, tree.pos_x + 38, tree.pos_y - 12); 
+function drawTrees() {
+	for (let i = 0; i < trees_x.length; i++) {
+		let tree = trees_x[i];
+		let pos_y = floorPos_y - 70 * tree.size;
+		
+		// draw tree 
+		push();
+		translate(tree.pos_x, pos_y);
+		scale(tree.size);
+		noStroke();
+		//trunk
+		fill(139, 69, 19);
+		rect(0, 0, 20, 70);
+		fill(34, 139, 34);
+		//lower foliage
+		triangle(-28, 18, 10, -40, 48, 18);
+		//upper foliage
+		triangle(-18, -12, 10, -80, 38, -12);
+		pop();
+	}
 }
 
+function drawCanyons() {
+	for (let i = 0; i < canyons.length; i++) {
+		let canyon = canyons[i];
+		
+		// draw canyon
+		// top sky blue
+		fill(100,155,255);
+		rect(canyon.pos_x, canyon.pos_y, canyon.width, canyon.height * 4/5);
+		// bottom  dark blue
+		fill(60,110,180);
+		rect(canyon.pos_x, canyon.pos_y + canyon.height * 4/5, canyon.width, canyon.height * 1/5);
+		// left margin edge
+		fill(80, 80, 80);
+		let leftMargin_x = canyon.pos_x;
+		triangle(leftMargin_x, 432, leftMargin_x, 462, leftMargin_x + 5, 440);
+		triangle(leftMargin_x, 440, leftMargin_x, 510, leftMargin_x + 8, 495);
+		triangle(leftMargin_x, 510, leftMargin_x, 576, leftMargin_x + 22, 555);
+		// right margin edge
+		let rightMargin_x = canyon.pos_x + canyon.width;
+		triangle(rightMargin_x, 432, rightMargin_x, 482, rightMargin_x - 5, 445);
+		triangle(rightMargin_x, 470, rightMargin_x, 560, rightMargin_x - 12, 492);
+		triangle(rightMargin_x, 520, rightMargin_x, 596, rightMargin_x - 20, 560);
+	}
+}
 
-function drawBird(x, y, scale) {
-	stroke(60);
-	strokeWeight(2 * scale);
-	noFill();
-	// left wing
-	arc(x, y, 24 * scale, 12 * scale, PI, 0); 
-	// right wing
-	arc(x + 18 * scale, y, 24 * scale, 12 * scale, PI, 0); 
+function drawBirds() {
+	for (let i = 0; i < birds.length; i++) {
+		let bird = birds[i];
+		// move left to right
+		bird.pos_x += bird.speed / 20; 
+
+		// draw bird
+		stroke(60);
+		strokeWeight(2 * bird.size);
+		noFill();
+		// left wing
+		arc(bird.pos_x, bird.pos_y, 24 * bird.size, 12 * bird.size, PI, 0); 
+		// right wing
+		arc(bird.pos_x + 18 * bird.size, bird.pos_y, 24 * bird.size, 12 * bird.size, PI, 0); 	
+		
+		// reset bird to left if it goes off the map
+		if (bird.pos_x > mapWidth + 40) {
+			bird.pos_x = -40;
+		}
+	}
 }
 
 function drawHUD() {
